@@ -1,8 +1,5 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = project.findProperty("projectGroup")
@@ -22,12 +19,12 @@ dependencies {
     implementation "org.lwjgl:lwjgl-openal:${lwjglVersion}"
 
     // LWJGL Native dependencies for the determined platform
-    implementation "org.lwjgl:lwjgl:${lwjglVersion}:natives-${platform}"
-    implementation "org.lwjgl:lwjgl-glfw:${lwjglVersion}:natives-${platform}"
-    implementation "org.lwjgl:lwjgl-opengl:${lwjglVersion}:natives-${platform}"
-    implementation "org.lwjgl:lwjgl-jemalloc:${lwjglVersion}:natives-${platform}"
-    implementation "org.lwjgl:lwjgl-stb:${lwjglVersion}:natives-${platform}"
-    implementation "org.lwjgl:lwjgl-openal:${lwjglVersion}:natives-${platform}"
+    runtimeOnly "org.lwjgl:lwjgl:${lwjglVersion}:natives-${platform}"
+    runtimeOnly "org.lwjgl:lwjgl-glfw:${lwjglVersion}:natives-${platform}"
+    runtimeOnly "org.lwjgl:lwjgl-opengl:${lwjglVersion}:natives-${platform}"
+    runtimeOnly "org.lwjgl:lwjgl-jemalloc:${lwjglVersion}:natives-${platform}"
+    runtimeOnly "org.lwjgl:lwjgl-stb:${lwjglVersion}:natives-${platform}"
+    runtimeOnly "org.lwjgl:lwjgl-openal:${lwjglVersion}:natives-${platform}"
 
     // Math
     implementation "org.joml:joml:${jomlVersion}"
@@ -41,46 +38,40 @@ dependencies {
     annotationProcessor "org.apache.logging.log4j:log4j-core:${log4jVersion}"
 }
 
-tasks.named('shadowJar', ShadowJar) {
+jar {
     archiveFileName.set('LinkoLauncher.jar')
 
-    mergeServiceFiles()
     manifest {
         attributes 'Main-Class': 'com.chaotic_loom.core.Main'
     }
 
     from {
-        project.configurations.runtimeClasspath.collect { file ->
-            file.isDirectory() ? file : zipTree(file)
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it).matching { exclude "**/*.so", "**/*.dll", "**/*.dylib", "**/*.jnilib" }
         }
     }
 
-    configurations = [project.configurations.runtimeClasspath]
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-tasks.build {
-    dependsOn tasks.shadowJar
-}
+tasks.register('extractNatives') {
+    doLast {
+        def nativesDir = file("${buildDir}/natives")
+        nativesDir.mkdirs()
 
-tasks.named('build') {
-    finalizedBy 'extractNatives'
-}
-
-tasks.register('extractNatives', Copy) {
-    def nativesDir = file("$buildDir/natives")
-
-    doFirst {
-        delete nativesDir
-    }
-
-    into(nativesDir)
-    from({
-        configurations.runtimeClasspath
-                .filter { it.name.contains("natives-${platform}") }
-                .collect { zipTree(it) }
-    }) {
-        include '**/*.so'     // Linux shared objects
-        include '**/*.dll'    // Windows dynamic libs
-        include '**/*.dylib'  // macOS dynamic libs
+        configurations.runtimeClasspath.files.each { file ->
+            if (file.name.contains("natives")) {
+                copy {
+                    from zipTree(file)
+                    into nativesDir
+                    include "**/*.so"
+                    include "**/*.dll"
+                    include "**/*.dylib"
+                    include "**/*.jnilib"
+                }
+            }
+        }
     }
 }
+
+jar.dependsOn extractNatives
