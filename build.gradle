@@ -46,32 +46,8 @@ jar {
     }
 
     from {
-        configurations.runtimeClasspath.collect {
-            it.isDirectory() ? it : zipTree(it).matching { exclude "**/*.so", "**/*.dll", "**/*.dylib", "**/*.jnilib" }
-        }
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
-
-tasks.register('extractNatives') {
-    doLast {
-        def nativesDir = file("${buildDir}/natives")
-        nativesDir.mkdirs()
-
-        configurations.runtimeClasspath.files.each { file ->
-            if (file.name.contains("natives")) {
-                copy {
-                    from zipTree(file)
-                    into nativesDir
-                    include "**/*.so"
-                    include "**/*.dll"
-                    include "**/*.dylib"
-                    include "**/*.jnilib"
-                }
-            }
-        }
-    }
-}
-
-jar.dependsOn extractNatives
