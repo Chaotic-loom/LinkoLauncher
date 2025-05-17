@@ -8,16 +8,6 @@ plugins {
 group = project.findProperty("projectGroup")
 version = project.findProperty("projectVersion")
 
-// Determine the platform for native dependencies
-def platform
-if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
-    platform = "windows"
-} else if (org.gradle.internal.os.OperatingSystem.current().isLinux()) {
-    platform = "linux"
-} else if (org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
-    platform = "macos"
-}
-
 repositories {
     mavenCentral()
 }
@@ -64,4 +54,10 @@ tasks.named('shadowJar', ShadowJar) {
 
 tasks.build {
     dependsOn tasks.shadowJar
+}
+
+tasks.register("extractNatives", Copy) {
+    from { configurations.runtimeClasspath.filter { it.name.contains("natives-linux") }.collect { zipTree(it) } }
+    include "*.so"
+    into "$buildDir/natives"
 }
