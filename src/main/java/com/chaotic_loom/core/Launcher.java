@@ -1,6 +1,8 @@
 package com.chaotic_loom.core;
 
 import com.chaotic_loom.graphics.Window;
+import com.chaotic_loom.util.Loggers;
+import com.chaotic_loom.util.OSDetector;
 
 import java.util.Random;
 
@@ -10,12 +12,18 @@ public class Launcher {
     private Window window;
     private Timer timer;
 
+    private OSDetector.OS os;
+    private OSDetector.Distro distro;
+
     private float r = 0f, g = 0f, b = 0f;
     private double lastColorChangeTime = 0;
     private static final double COLOR_CHANGE_INTERVAL = 3.0; // seconds
     private Random random = new Random();
 
     public Launcher() {
+        this.os = OSDetector.detectOS();
+        this.distro = OSDetector.detectLinuxDistro();
+
         this.window = new Window("Linko", 500, 500);
         this.timer = new Timer();
 
@@ -23,6 +31,8 @@ public class Launcher {
     }
 
     public void init() {
+        Loggers.LAUNCHER.info("OS: {}, Distro: {}", os, distro);
+
         this.window.init();
         this.timer.init();
 
