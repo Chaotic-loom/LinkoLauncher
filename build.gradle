@@ -56,8 +56,25 @@ tasks.build {
     dependsOn tasks.shadowJar
 }
 
-tasks.register("extractNatives", Copy) {
-    from { configurations.runtimeClasspath.filter { it.name.contains("natives-linux") }.collect { zipTree(it) } }
-    include "*.so"
-    into "$buildDir/natives"
+tasks.named('build') {
+    finalizedBy 'extractNatives'
+}
+
+tasks.register('extractNatives', Copy) {
+    def nativesDir = file("$buildDir/natives")
+
+    doFirst {
+        delete nativesDir
+    }
+
+    into(nativesDir)
+    from({
+        configurations.runtimeClasspath
+                .filter { it.name.contains("natives-${platform}") }
+                .collect { zipTree(it) }
+    }) {
+        include '**/*.so'     // Linux shared objects
+        include '**/*.dll'    // Windows dynamic libs
+        include '**/*.dylib'  // macOS dynamic libs
+    }
 }
