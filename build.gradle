@@ -49,6 +49,12 @@ tasks.named('shadowJar', ShadowJar) {
         attributes 'Main-Class': 'com.chaotic_loom.core.Main'
     }
 
+    from {
+        project.configurations.runtimeClasspath.collect { file ->
+            file.isDirectory() ? file : zipTree(file)
+        }
+    }
+
     configurations = [project.configurations.runtimeClasspath]
 }
 
