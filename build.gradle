@@ -5,10 +5,55 @@ plugins {
 group = project.findProperty("projectGroup")
 version = project.findProperty("projectVersion")
 
+// Determine the platform for native dependencies
+def platform
+if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+    platform = "windows"
+} else if (org.gradle.internal.os.OperatingSystem.current().isLinux()) {
+    platform = "linux"
+} else if (org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
+    platform = "macos"
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    // LWJGL Core
+    implementation "org.lwjgl:lwjgl:${lwjglVersion}"
+    implementation "org.lwjgl:lwjgl-glfw:${lwjglVersion}"
+    implementation "org.lwjgl:lwjgl-opengl:${lwjglVersion}"
+    implementation "org.lwjgl:lwjgl-jemalloc:${lwjglVersion}"
+    implementation "org.lwjgl:lwjgl-stb:${lwjglVersion}"
+    implementation "org.lwjgl:lwjgl-openal:${lwjglVersion}"
 
+    // LWJGL Native dependencies for the determined platform
+    runtimeOnly "org.lwjgl:lwjgl:${lwjglVersion}:natives-${platform}"
+    runtimeOnly "org.lwjgl:lwjgl-glfw:${lwjglVersion}:natives-${platform}"
+    runtimeOnly "org.lwjgl:lwjgl-opengl:${lwjglVersion}:natives-${platform}"
+    runtimeOnly "org.lwjgl:lwjgl-jemalloc:${lwjglVersion}:natives-${platform}"
+    runtimeOnly "org.lwjgl:lwjgl-stb:${lwjglVersion}:natives-${platform}"
+    runtimeOnly "org.lwjgl:lwjgl-openal:${lwjglVersion}:natives-${platform}"
+
+    // Math
+    implementation "org.joml:joml:${jomlVersion}"
+
+    // Networking
+    implementation "io.netty:netty-all:${nettyVersion}"
+
+    // Logger
+    implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+    implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+    annotationProcessor "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+}
+
+jar {
+    archiveBaseName.set("LinkoLauncher")
+    archiveVersion.set("")
+    manifest {
+        attributes(
+                'Main-Class': 'com.chaotic_loom.Main'
+        )
+    }
 }

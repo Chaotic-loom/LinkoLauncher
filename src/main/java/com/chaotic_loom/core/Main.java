@@ -1,7 +1,7 @@
-package com.chaotic_loom;
+package com.chaotic_loom.core;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello, World!");
+        new Launcher().init();
     }
 }
