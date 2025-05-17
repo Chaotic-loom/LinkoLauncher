@@ -1,5 +1,8 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = project.findProperty("projectGroup")
@@ -49,11 +52,27 @@ dependencies {
 }
 
 jar {
-    archiveBaseName.set("LinkoLauncher")
+    archiveBaseName.set("LinkoLauncher-raw")
     archiveVersion.set("")
     manifest {
         attributes(
-                'Main-Class': 'com.chaotic_loom.Main'
+                'Main-Class': 'com.chaotic_loom.core.Main'
         )
+    }
+}
+
+shadowJar {
+    archiveBaseName.set("LinkoLauncher")
+    archiveVersion.set("")
+    manifest {
+        attributes 'Main-Class': 'com.chaotic_loom.core.Main'
+    }
+}
+
+tasks.register('buildShadowJar', ShadowJar) {
+    archiveBaseName.set("LinkoLauncher")
+    archiveVersion.set("")
+    manifest {
+        attributes 'Main-Class': 'com.chaotic_loom.core.Main'
     }
 }
