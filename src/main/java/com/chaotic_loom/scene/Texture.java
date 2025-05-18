@@ -1,4 +1,4 @@
-package com.chaotic_loom.graphics;
+package com.chaotic_loom.scene;
 
 import com.chaotic_loom.util.Loggers;
 import org.lwjgl.system.MemoryStack;

@@ -1,11 +1,11 @@
 package com.chaotic_loom.core;
 
 import com.chaotic_loom.graphics.Renderer;
-import com.chaotic_loom.graphics.Scene;
+import com.chaotic_loom.scene.Scene;
 import com.chaotic_loom.graphics.TextureManager;
 import com.chaotic_loom.graphics.Window;
 import com.chaotic_loom.registries.RegistryManager;
-import com.chaotic_loom.util.InputManager;
+import com.chaotic_loom.input.InputManager;
 import com.chaotic_loom.util.Loggers;
 import com.chaotic_loom.util.OSDetector;
 

@@ -1,9 +1,9 @@
-package com.chaotic_loom.graphics;
+package com.chaotic_loom.scene;
 
 import com.chaotic_loom.core.Launcher;
 import com.chaotic_loom.core.Timer;
+import com.chaotic_loom.graphics.TextureAtlasInfo;
 import com.chaotic_loom.util.Cube;
-import com.chaotic_loom.util.InputManager;
 import com.chaotic_loom.util.Loggers;
 import com.chaotic_loom.util.RenderStats;
 import org.joml.Matrix4f;
@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.lwjgl.glfw.GLFW.*;
 
 public class Scene {
     private final RenderStats renderStats;

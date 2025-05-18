@@ -1,6 +1,6 @@
 package com.chaotic_loom.util;
 
-import com.chaotic_loom.graphics.Mesh;
+import com.chaotic_loom.scene.Mesh;
 
 public class Cube {
 

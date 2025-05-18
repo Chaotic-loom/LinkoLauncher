@@ -1,5 +1,7 @@
 package com.chaotic_loom.graphics;
 
+import com.chaotic_loom.scene.Texture;
+
 import java.util.Objects;
 
 /**

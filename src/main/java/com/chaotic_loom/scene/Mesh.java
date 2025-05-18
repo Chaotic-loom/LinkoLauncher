@@ -1,5 +1,6 @@
-package com.chaotic_loom.graphics;
+package com.chaotic_loom.scene;
 
+import com.chaotic_loom.graphics.TextureAtlasInfo;
 import com.chaotic_loom.util.Loggers;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;

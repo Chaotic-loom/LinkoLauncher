@@ -1,12 +1,13 @@
 package com.chaotic_loom.graphics;
 
 import com.chaotic_loom.registries.built_in.Shaders;
+import com.chaotic_loom.scene.Camera;
+import com.chaotic_loom.scene.Mesh;
+import com.chaotic_loom.scene.Texture;
 import com.chaotic_loom.util.RenderStats;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package com.chaotic_loom.util;
+package com.chaotic_loom.scene;
 
 import org.joml.Math;
 import org.joml.Quaternionf;

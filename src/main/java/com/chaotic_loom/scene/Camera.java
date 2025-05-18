@@ -1,9 +1,7 @@
-package com.chaotic_loom.graphics;
+package com.chaotic_loom.scene;
 
-import com.chaotic_loom.util.Transform;
 import org.joml.Math;
 import org.joml.Matrix4f;
-import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 
 public class Camera {

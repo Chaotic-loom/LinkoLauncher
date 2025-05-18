@@ -1,6 +1,6 @@
-package com.chaotic_loom.graphics;
+package com.chaotic_loom.scene;
 
-import com.chaotic_loom.util.Transform;
+import com.chaotic_loom.graphics.TextureAtlasInfo;
 import org.joml.Matrix4f;
 
 public class GameObject {

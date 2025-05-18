@@ -1,6 +1,7 @@
-package com.chaotic_loom.util;
+package com.chaotic_loom.input;
 
 import com.chaotic_loom.graphics.Window;
+import com.chaotic_loom.util.Loggers;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;

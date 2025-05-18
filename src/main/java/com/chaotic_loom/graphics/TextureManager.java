@@ -1,5 +1,6 @@
 package com.chaotic_loom.graphics;
 
+import com.chaotic_loom.scene.Texture;
 import com.chaotic_loom.util.Loggers;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.stb.STBImageWrite;
