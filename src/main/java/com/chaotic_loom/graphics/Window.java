@@ -18,15 +18,14 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
     private long windowHandle;
+
     private String title;
-    private int width;
-    private int height;
     private boolean vsync = true;
 
-    public Window(String title, int width, int height) {
+    private int width, height;
+
+    public Window(String title) {
         this.title = title;
-        this.width = width;
-        this.height = height;
     }
 
     public void init() {
@@ -41,7 +40,7 @@ public class Window {
         // Configure GLFW
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         // Request OpenGL 3.3 Core profile
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -50,17 +49,31 @@ public class Window {
 
         //glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
+        // Obtain monitor and its video mode
+        long monitor = glfwGetPrimaryMonitor();
+        if (monitor == NULL) {
+            throw new IllegalStateException("Primary monitor not found");
+        }
+
+        GLFWVidMode vidmode = glfwGetVideoMode(monitor);
+        if (vidmode == null) {
+            throw new IllegalStateException("Unable to query video mode");
+        }
+
         // Create the window
-        windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
+        // Create fullscreen window
+        this.updateSize(vidmode);
+
+        windowHandle = glfwCreateWindow(this.width, this.height, title, monitor, NULL);
         if (windowHandle == NULL) {
             throw new RuntimeException("Failed to create the GLFW window");
         }
 
         // Setup resize callback
         glfwSetFramebufferSizeCallback(windowHandle, (window, w, h) -> {
-            this.width = w;
-            this.height = h;
+            Loggers.WINDOW.info("GLFW window is being resized, wait what? how?");
 
+            this.updateSize(vidmode);
             glViewport(0, 0, w, h);
 
             WindowEvents.RESIZE.invoker().onEvent(this, w, h);
@@ -73,22 +86,6 @@ public class Window {
 
             // Get the window size passed to glfwCreateWindow
             glfwGetWindowSize(windowHandle, pWidth, pHeight);
-
-            // Get the resolution of the primary monitor
-            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-            // Center the window
-            if (vidmode != null) {
-                glfwSetWindowPos(
-                        windowHandle,
-                        (vidmode.width() - pWidth.get(0)) / 2,
-                        (vidmode.height() - pHeight.get(0)) / 2
-                );
-            } else {
-                Loggers.WINDOW.error("Could not get primary monitor video mode!");
-                // Default position if monitor info isn't available
-                glfwSetWindowPos(windowHandle, 100, 100);
-            }
         } // the stack frame is popped automatically
 
         // Make the OpenGL context current
@@ -131,6 +128,11 @@ public class Window {
         }
 
         Loggers.WINDOW.info("Window cleaned up.");
+    }
+
+    public void updateSize(GLFWVidMode vidmode) {
+        this.width = vidmode.width();
+        this.height = vidmode.height();
     }
 
     public boolean isCloseRequested() {

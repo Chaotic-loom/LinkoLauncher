@@ -24,7 +24,7 @@ public class Launcher {
         this.os = OSDetector.detectOS();
         this.distro = OSDetector.detectLinuxDistro();
 
-        this.window = new Window("Linko", 500, 500);
+        this.window = new Window("Linko");
         this.timer = new Timer();
 
         lastColorChangeTime = timer.getTime();
