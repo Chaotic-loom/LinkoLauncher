@@ -60,9 +60,8 @@ public class Window {
             throw new IllegalStateException("Unable to query video mode");
         }
 
-        // Create the window
-        // Create fullscreen window
-        this.updateSize(vidmode);
+        // Create the fullscreen window
+        this.updateSizeData(vidmode);
 
         windowHandle = glfwCreateWindow(this.width, this.height, title, monitor, NULL);
         if (windowHandle == NULL) {
@@ -71,9 +70,7 @@ public class Window {
 
         // Setup resize callback
         glfwSetFramebufferSizeCallback(windowHandle, (window, w, h) -> {
-            Loggers.WINDOW.info("GLFW window is being resized, wait what? how?");
-
-            this.updateSize(vidmode);
+            this.updateSizeData(vidmode);
             glViewport(0, 0, w, h);
 
             WindowEvents.RESIZE.invoker().onEvent(this, w, h);
@@ -130,7 +127,7 @@ public class Window {
         Loggers.WINDOW.info("Window cleaned up.");
     }
 
-    public void updateSize(GLFWVidMode vidmode) {
+    public void updateSizeData(GLFWVidMode vidmode) {
         this.width = vidmode.width();
         this.height = vidmode.height();
     }

@@ -36,10 +36,13 @@ dependencies {
     implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
     implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     annotationProcessor "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+
+    // Reflection
+    implementation "org.reflections:reflections:${reflectionVersion}"
 }
 
 jar {
-    archiveFileName.set('LinkoLauncher.jar')
+    archiveFileName.set("${fileName}.jar")
 
     manifest {
         attributes 'Main-Class': 'com.chaotic_loom.core.Main'
@@ -50,4 +53,33 @@ jar {
     }
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.register('cleanLibs', Delete) {
+    delete("$buildDir/libs")
+}
+
+tasks.withType(Jar).configureEach {
+    dependsOn(tasks.named('cleanLibs'))
+}
+
+tasks.register('buildWindows', GradleBuild) {
+    tasks = ['jar']
+    startParameter.projectProperties = [
+            'platform': 'windows',
+            'fileName': "${fileName}-windows"
+    ]
+}
+
+tasks.register('runWindows') {
+    dependsOn 'buildWindows'
+    doLast {
+        // Execute the built JAR
+        javaexec {
+            workingDir = file("$rootDir/run/")
+
+            classpath = files("$buildDir/libs/${fileName}-windows.jar")
+            mainClass = 'com.chaotic_loom.core.Main'
+        }
+    }
 }

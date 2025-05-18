@@ -6,6 +6,7 @@ public class Timer {
     private double lastLoopTime;
     private int fpsCount;
     private double lastFpsTime;
+    private float deltaTime;
 
     public void init() {
         lastLoopTime = getTime();
@@ -17,7 +18,11 @@ public class Timer {
         return GLFW.glfwGetTime();
     }
 
-    public float getElapsedTime() {
+    public float getDeltaTime() {
+        return deltaTime;
+    }
+
+    public void updateElapsedTime() {
         double currentTime = getTime();
         float elapsedTime = (float) (currentTime - lastLoopTime);
         lastLoopTime = currentTime;
@@ -25,7 +30,7 @@ public class Timer {
         // Update FPS counter display each second (called by frameRendered)
         updateFPSCounter();
 
-        return elapsedTime;
+        deltaTime = elapsedTime;
     }
 
     // Called externally after a frame is rendered

@@ -1,62 +1,75 @@
 package com.chaotic_loom.core;
 
+import com.chaotic_loom.graphics.Renderer;
+import com.chaotic_loom.graphics.Scene;
+import com.chaotic_loom.graphics.TextureManager;
 import com.chaotic_loom.graphics.Window;
+import com.chaotic_loom.registries.RegistryManager;
+import com.chaotic_loom.util.InputManager;
 import com.chaotic_loom.util.Loggers;
 import com.chaotic_loom.util.OSDetector;
 
-import java.util.Random;
-
-import static org.lwjgl.opengl.GL11.*;
-
 public class Launcher {
-    private Window window;
-    private Timer timer;
+    private final Window window;
+    private final Renderer renderer;
+    private final TextureManager textureManager;
+    private final Timer timer;
+    private final InputManager inputManager;
 
-    private OSDetector.OS os;
-    private OSDetector.Distro distro;
+    private final Scene scene;
 
-    private float r = 0f, g = 0f, b = 0f;
-    private double lastColorChangeTime = 0;
-    private static final double COLOR_CHANGE_INTERVAL = 3.0; // seconds
-    private Random random = new Random();
+    private final OSDetector.OS os;
+    private final OSDetector.Distro distro;
+
+    private static Launcher instance = new Launcher();
+
+    public static Launcher getInstance() {
+        return Launcher.instance;
+    }
 
     public Launcher() {
         this.os = OSDetector.detectOS();
         this.distro = OSDetector.detectLinuxDistro();
 
         this.window = new Window("Linko");
+        this.renderer = new Renderer();
+        this.textureManager = new TextureManager();
         this.timer = new Timer();
+        this.inputManager = new InputManager();
 
-        lastColorChangeTime = timer.getTime();
+        this.scene = new Scene();
     }
 
     public void init() {
         Loggers.LAUNCHER.info("OS: {}, Distro: {}", os, distro);
 
         this.window.init();
+
+        RegistryManager.init();
+        textureManager.bakeAtlases("textures");
+
         this.timer.init();
+        this.renderer.init();
+        this.scene.init();
+        this.inputManager.init(this.window);
 
         this.loop();
 
+        this.inputManager.cleanup(this.window);
+        this.renderer.cleanup();
         this.window.cleanup();
     }
 
     protected void loop() {
-        float elapsedTime;
-
         while (!this.window.isCloseRequested()) {
             // Get time delta for this frame
-            elapsedTime = this.timer.getElapsedTime();
-
-            // --- Input Processing ---
-            // Process continuous input (movement keys)
-            //processInput(elapsedTime);
+            this.timer.updateElapsedTime();
 
             // --- Client Update ---
-            //inputManager.update();
+            this.inputManager.update();
 
             // --- Rendering ---
-            render();
+            this.scene.render(this.timer);
             this.timer.frameRendered(); // Update FPS counter
 
             // --- Window update ---
@@ -66,19 +79,6 @@ public class Launcher {
 
             this.window.update();
         }
-    }
-
-    private void render() {
-        double currentTime = timer.getTime();
-        if (currentTime - lastColorChangeTime >= COLOR_CHANGE_INTERVAL) {
-            r = random.nextFloat();
-            g = random.nextFloat();
-            b = random.nextFloat();
-            lastColorChangeTime = currentTime;
-        }
-
-        glClearColor(r, g, b, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     private void sync() {
@@ -94,4 +94,32 @@ public class Launcher {
         lastSyncTime = this.timer.getTime(); // Track when sync finished
     }
     private double lastSyncTime = 0;
+
+    public Window getWindow() {
+        return window;
+    }
+
+    public Renderer getRenderer() {
+        return renderer;
+    }
+
+    public TextureManager getTextureManager() {
+        return textureManager;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public InputManager getInputManager() {
+        return inputManager;
+    }
+
+    public OSDetector.OS getOs() {
+        return os;
+    }
+
+    public OSDetector.Distro getDistro() {
+        return distro;
+    }
 }
