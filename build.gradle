@@ -68,12 +68,17 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+tasks.register('cleanExtra', Delete) {
+    delete("$buildDir/extra")
+}
+
 tasks.register('cleanLibs', Delete) {
     delete("$buildDir/libs")
 }
 
 tasks.withType(Jar).configureEach {
     dependsOn(tasks.named('cleanLibs'))
+    dependsOn(tasks.named('cleanExtra'))
 }
 
 tasks.register('buildWindows', GradleBuild) {
