@@ -41,8 +41,15 @@ dependencies {
     implementation "org.reflections:reflections:${reflectionVersion}"
 }
 
+tasks.register('generateVersionFile') {
+    outputs.file("$buildDir/extra/version")
+    doLast {
+        file("$buildDir/extra/version").text = project.version.toString()
+    }
+}
+
 jar {
-    archiveFileName.set("${fileName}.jar")
+    archiveFileName.set("${fileName}-${version}.jar")
 
     manifest {
         attributes 'Main-Class': 'com.chaotic_loom.core.Main'
@@ -50,6 +57,12 @@ jar {
 
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    // Creation of extra files
+    dependsOn generateVersionFile
+    from("$buildDir/extra") {
+        into 'extra'
     }
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -78,7 +91,7 @@ tasks.register('runWindows') {
         javaexec {
             workingDir = file("$rootDir/run/")
 
-            classpath = files("$buildDir/libs/${fileName}-windows.jar")
+            classpath = files("$buildDir/libs/${fileName}-windows-${version}.jar")
             mainClass = 'com.chaotic_loom.core.Main'
         }
     }

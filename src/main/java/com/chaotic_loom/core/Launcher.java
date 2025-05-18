@@ -8,6 +8,7 @@ import com.chaotic_loom.registries.RegistryManager;
 import com.chaotic_loom.input.InputManager;
 import com.chaotic_loom.util.Loggers;
 import com.chaotic_loom.util.OSDetector;
+import com.chaotic_loom.util.UpdateManager;
 
 public class Launcher {
     private final Window window;
@@ -42,6 +43,7 @@ public class Launcher {
 
     public void init() {
         Loggers.LAUNCHER.info("OS: {}, Distro: {}", os, distro);
+        UpdateManager.update();
 
         this.window.init();
 
