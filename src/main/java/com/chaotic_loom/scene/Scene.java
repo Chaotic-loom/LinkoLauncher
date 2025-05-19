@@ -109,8 +109,12 @@ public class Scene {
                 3 + (float) Math.sin(timer.getTime())
         );*/
 
-        if (Launcher.getInstance().getInputManager().isKeyPressed(GLFW.GLFW_KEY_P)) {
-            OSHelper.executeCommand("sudo shutdown -h now");
+        if (Launcher.getInstance().getInputManager().isKeyPressed(GLFW.GLFW_KEY_R)) {
+            OSHelper.executeCommand("sudo reboot");
+        }
+
+        if (Launcher.getInstance().getInputManager().isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
+            System.exit(0);
         }
     }
 }
