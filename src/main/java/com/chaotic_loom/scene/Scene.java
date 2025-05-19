@@ -104,7 +104,7 @@ public class Scene {
         superCoolCube.getTransform().setScale((float) Math.sin(timer.getTime()), (float) Math.cos(timer.getTime()), (float) Math.sin(timer.getTime()));
         superCoolCube.getTransform().rotateAround(new Vector3f(), timer.getDeltaTime() * 50, 0, 1, 0);
 
-        idk.getTransform().rotateAround(superCoolCube.getTransform().getPosition(), timer.getDeltaTime() * 1000, 1, 1, 1, true);
+        idk.getTransform().rotateAround(center.getTransform().getPosition(), timer.getDeltaTime() * 1000, 1, 1, 1, true);
 
         center.getTransform().setPosition(0, (float) Math.cos(timer.getTime()), 0);
 
