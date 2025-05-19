@@ -39,6 +39,11 @@ dependencies {
 
     // Reflection
     implementation "org.reflections:reflections:${reflectionVersion}"
+
+    //ImGui
+    implementation "io.github.spair:imgui-java-binding:${imguiJavaVersion}" // ImGui for GUI
+    implementation "io.github.spair:imgui-java-lwjgl3:${imguiJavaVersion}" // ImGui for GUI
+    runtimeOnly "io.github.spair:imgui-java-natives-${imguiPlatform}:${imguiJavaVersion}"
 }
 
 tasks.register('generateVersionFile') {
@@ -85,6 +90,7 @@ tasks.register('buildWindows', GradleBuild) {
     tasks = ['jar']
     startParameter.projectProperties = [
             'platform': 'windows',
+            'imguiPlatform': 'windows',
             'fileName': "${fileName}-windows"
     ]
 }

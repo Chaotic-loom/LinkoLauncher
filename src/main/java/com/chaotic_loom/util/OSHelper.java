@@ -13,16 +13,16 @@ public class OSHelper {
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+                Loggers.LAUNCHER.info(line);
             }
 
             // Leer los errores del comando
             BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             while ((line = errorReader.readLine()) != null) {
-                System.err.println(line);
+                Loggers.LAUNCHER.error(line);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Loggers.LAUNCHER.error(e);
         }
     }
 }

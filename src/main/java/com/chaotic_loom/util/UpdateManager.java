@@ -63,9 +63,9 @@ public class UpdateManager {
             out.close();
             in.close();
 
-            System.out.println("File downloaded successfully to: " + savePath + fileName);
+            Loggers.LAUNCHER.info("File downloaded successfully to: {}{}", savePath, fileName);
         } catch (IOException e) {
-            e.printStackTrace();
+            Loggers.LAUNCHER.error(e);
         }
     }
 
@@ -83,8 +83,8 @@ public class UpdateManager {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error fetching latest release:");
-            e.printStackTrace();
+            Loggers.LAUNCHER.error("Error fetching latest release:");
+            Loggers.LAUNCHER.error(e);
             return null;
         }
 

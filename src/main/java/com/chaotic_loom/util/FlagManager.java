@@ -28,7 +28,7 @@ public class FlagManager {
     public static String readJarFlag(String flag) {
         try (InputStream is = UpdateManager.class.getClassLoader().getResourceAsStream("extra/" + flag)) {
             if (is == null) {
-                System.err.println("Resource 'extra/' " + flag + " not found in JAR.");
+                Loggers.LAUNCHER.error("Resource 'extra/' {} not found in JAR.", flag);
                 return null;
             }
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
@@ -40,7 +40,7 @@ public class FlagManager {
                 return sb.toString().trim();
             }
         } catch (IOException e) {
-            System.err.println("Error reading " + flag + " resource: " + e.getMessage());
+            Loggers.LAUNCHER.error("Error reading {} resource: {}", flag, e.getMessage());
             return null;
         }
     }
