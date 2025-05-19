@@ -6,6 +6,7 @@ import com.chaotic_loom.graphics.TextureManager;
 import com.chaotic_loom.graphics.Window;
 import com.chaotic_loom.registries.RegistryManager;
 import com.chaotic_loom.input.InputManager;
+import com.chaotic_loom.util.FlagManager;
 import com.chaotic_loom.util.Loggers;
 import com.chaotic_loom.util.OSDetector;
 import com.chaotic_loom.util.UpdateManager;
@@ -43,6 +44,13 @@ public class Launcher {
 
     public void init() {
         Loggers.LAUNCHER.info("OS: {}, Distro: {}", os, distro);
+
+        if (FlagManager.flagExists(FlagManager.BOOT_FLAGS, "updated")) {
+            Loggers.LAUNCHER.info("The launcher has been updated!");
+
+            FlagManager.deleteFlag(FlagManager.BOOT_FLAGS, "updated");
+        }
+
         UpdateManager.update();
 
         this.window.init();

@@ -1,21 +1,13 @@
 package com.chaotic_loom.util;
 
-import javax.net.ssl.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.*;
 
 public class UpdateManager {
-    public static final String CURRENT_VERSION = readFlag("version");
+    public static final String CURRENT_VERSION = FlagManager.readJarFlag("version");
 
     public static void update() {
         boolean isLatest = UpdateManager.isCurrentLatest();
@@ -97,25 +89,5 @@ public class UpdateManager {
         }
 
         return response.toString().replace("LinkoLauncher-", "").replace(".jar", "");
-    }
-
-    public static String readFlag(String flag) {
-        try (InputStream is = UpdateManager.class.getClassLoader().getResourceAsStream("extra/" + flag)) {
-            if (is == null) {
-                System.err.println("Resource 'extra/' " + flag + " not found in JAR.");
-                return null;
-            }
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-                return sb.toString().trim();
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading " + flag + " resource: " + e.getMessage());
-            return null;
-        }
     }
 }
