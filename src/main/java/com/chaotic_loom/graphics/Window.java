@@ -26,6 +26,8 @@ public class Window {
 
     public Window(String title) {
         this.title = title;
+        this.width = 800;
+        this.height = 480;
     }
 
     public void init() {
@@ -61,8 +63,6 @@ public class Window {
         }
 
         // Create the fullscreen window
-        this.updateSizeData(vidmode);
-
         windowHandle = glfwCreateWindow(this.width, this.height, title, monitor, NULL);
         if (windowHandle == NULL) {
             throw new RuntimeException("Failed to create the GLFW window");
@@ -70,9 +70,7 @@ public class Window {
 
         // Setup resize callback
         glfwSetFramebufferSizeCallback(windowHandle, (window, w, h) -> {
-            this.updateSizeData(vidmode);
             glViewport(0, 0, w, h);
-
             WindowEvents.RESIZE.invoker().onEvent(this, w, h);
         });
 
@@ -100,6 +98,7 @@ public class Window {
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
+        glViewport(0, 0, this.width, this.height);
 
         // Set the clear color (White)
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -163,5 +162,9 @@ public class Window {
         } else {
             glfwSwapInterval(0); // Disable VSync
         }
+    }
+
+    public float getAspectRatio() {
+        return (float) this.width / this.height;
     }
 }

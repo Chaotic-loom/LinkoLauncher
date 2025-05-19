@@ -5,9 +5,11 @@ import com.chaotic_loom.core.Timer;
 import com.chaotic_loom.graphics.TextureAtlasInfo;
 import com.chaotic_loom.util.Cube;
 import com.chaotic_loom.util.Loggers;
+import com.chaotic_loom.util.OSHelper;
 import com.chaotic_loom.util.RenderStats;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +33,8 @@ public class Scene {
     }
 
     public void init() {
+        camera.setAspectRatio(Launcher.getInstance().getWindow().getAspectRatio());
+
         // Create sample geometry (TEMP)
         Mesh cubeMesh = Cube.createMesh();
         GameObject cube1 = new GameObject(cubeMesh, Launcher.getInstance().getTextureManager().getTextureInfo("/textures/stone.png"));
@@ -105,5 +109,9 @@ public class Scene {
                 (float) Math.sin(timer.getTime()),
                 3 + (float) Math.sin(timer.getTime())
         );*/
+
+        if (Launcher.getInstance().getInputManager().isKeyPressed(GLFW.GLFW_KEY_P)) {
+            OSHelper.executeCommand("sudo shutdown -h now");
+        }
     }
 }
