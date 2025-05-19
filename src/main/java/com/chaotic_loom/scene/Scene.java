@@ -5,6 +5,7 @@ import com.chaotic_loom.core.Timer;
 import com.chaotic_loom.graphics.TextureAtlasInfo;
 import com.chaotic_loom.util.*;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
@@ -14,25 +15,57 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.lwjgl.opengl.GL11.*;
+
 
 public class Scene {
     private final RenderStats renderStats;
     private final List<GameObject> gameObjects; // TEMP state
+    private final List<GameObject> guis; // TEMP state
     private final Map<Texture, Map<Mesh, Map<TextureAtlasInfo, List<Matrix4f>>>> atlasRenderBatch;
+    private final Map<Texture, Map<Mesh, Map<TextureAtlasInfo, List<Matrix4f>>>> atlasGuiRenderBatch;
 
     private final Camera camera;
+    private final Camera guiCamera;
 
     private GameObject superCoolCube, idk, center;
 
     public Scene() {
         this.camera = new Camera();
+        this.guiCamera = new Camera();
         this.renderStats = new RenderStats();
         this.gameObjects = new ArrayList<>();
+        this.guis = new ArrayList<>();
         this.atlasRenderBatch = new HashMap<>();
+        this.atlasGuiRenderBatch = new HashMap<>();
     }
 
     public void init() {
         camera.setAspectRatio(Launcher.getInstance().getWindow().getAspectRatio());
+        guiCamera.setAspectRatio(Launcher.getInstance().getWindow().getAspectRatio());
+
+        int w = Launcher.getInstance().getWindow().getWidth();
+        int h = Launcher.getInstance().getWindow().getHeight();
+
+        float zNear = guiCamera.getNearPlane();
+        float zFar = guiCamera.getFarPlane();
+
+        float halfW = w * 0.5f;
+        float halfH = h * 0.5f;
+
+        guiCamera.setOrthographic(
+                -halfW, halfW,
+                -halfH, halfH,
+                zNear,  zFar
+        );
+
+
+        GameObject frame = new GameObject(Quad.createMesh(), Launcher.getInstance().getTextureManager().getTextureInfo("/textures/icon.png"));
+        int iw = 312 / 3;
+        int ih = 386 / 3;
+        frame.getTransform().setScale(iw, ih, 1);
+        frame.getTransform().setPosition((float) -w/2 + (float) iw/2, (float) h/2 - (float) ih/2, 0);
+        guis.add(frame);
 
         // Create sample geometry (TEMP)
         Mesh cubeMesh = Cube.createMesh();
@@ -62,8 +95,8 @@ public class Scene {
         idk = cube2;
     }
 
-    private void prepareRenderBatch() {
-        atlasRenderBatch.clear();
+    private void prepareRenderBatch(Map<Texture, Map<Mesh, Map<TextureAtlasInfo, List<Matrix4f>>>> batch, List<GameObject> gameObjects) {
+        batch.clear();
         renderStats.resetFrame();
 
         // Prepare batch
@@ -80,20 +113,25 @@ public class Scene {
             Texture atlasTexture = atlasInfo.atlasTexture();
 
             // Populate the 3-level batch structure:
-            atlasRenderBatch
-                    .computeIfAbsent(atlasTexture, k -> new HashMap<>())    // Level 1: Atlas Texture
-                    .computeIfAbsent(mesh, k -> new HashMap<>())    // Level 2: Mesh
-                    .computeIfAbsent(atlasInfo, k -> new ArrayList<>())     // Level 3: AtlasInfo (UV region)
-                    .add(go.getModelMatrix());      // Add instance matrix to the list
+            batch
+                .computeIfAbsent(atlasTexture, k -> new HashMap<>())    // Level 1: Atlas Texture
+                .computeIfAbsent(mesh, k -> new HashMap<>())    // Level 2: Mesh
+                .computeIfAbsent(atlasInfo, k -> new ArrayList<>())     // Level 3: AtlasInfo (UV region)
+                .add(go.getModelMatrix());      // Add instance matrix to the list
         }
     }
 
     public void render(Timer timer) {
         tempInput(timer);
 
-        prepareRenderBatch();
+        prepareRenderBatch(atlasRenderBatch, gameObjects);
+        prepareRenderBatch(atlasGuiRenderBatch, guis);
 
+        Launcher.getInstance().getRenderer().clear();
+        glEnable(GL_DEPTH_TEST);
         Launcher.getInstance().getRenderer().render(camera, atlasRenderBatch, renderStats);
+        glDisable(GL_DEPTH_TEST);
+        Launcher.getInstance().getRenderer().render(guiCamera, atlasGuiRenderBatch, renderStats);
 
         if (renderStats.getTotalFrames() % (60 * 10) == 0) {
             Loggers.RENDERER.info(renderStats.getSummary());
@@ -116,7 +154,7 @@ public class Scene {
         );*/
 
         if (Launcher.getInstance().getInputManager().isKeyPressed(GLFW.GLFW_KEY_R)) {
-            OSHelper.executeCommand("sudo reboot");
+            OSHelper.reboot();
         }
 
         if (Launcher.getInstance().getInputManager().isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {

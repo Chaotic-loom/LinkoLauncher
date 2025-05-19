@@ -21,7 +21,7 @@ public class UpdateManager {
 
         Loggers.LAUNCHER.info("Update downloaded!");
 
-        OSHelper.executeCommand("sudo reboot");
+        OSHelper.reboot();
     }
 
     public static boolean isCurrentLatest() {

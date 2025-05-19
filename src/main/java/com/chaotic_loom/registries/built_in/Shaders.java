@@ -9,6 +9,7 @@ import com.chaotic_loom.registries.Registry;
 
 public class Shaders extends AbstractRegistryInitializer {
     public static ShaderProgram MAIN;
+    public static ShaderProgram GUI;
 
     @Override
     public void register() {

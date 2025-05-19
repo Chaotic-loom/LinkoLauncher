@@ -23,8 +23,6 @@ public class Renderer {
     private final Vector3f defaultObjectColor = new Vector3f(1.0f, 1.0f, 1.0f);
 
     public void init() {
-        glEnable(GL_DEPTH_TEST);
-
         // Enable backface culling
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
@@ -36,6 +34,11 @@ public class Renderer {
         cleanupRenderingState();
     }
 
+    public void clear() {
+        // --- Cleaning ---
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear buffers
+    }
+
     /**
      * Sets up the initial OpenGL state for rendering the frame.
      * Clears buffers, binds the shader, sets global uniforms, and enables vertex attributes.
@@ -43,10 +46,6 @@ public class Renderer {
      * @param camera The camera used for the frame.
      */
     private void setupRendering(Camera camera) {
-        // --- Cleaning ---
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear buffers
-
-
         // --- Bind the shader program ONCE before the main loops ---
         Shaders.MAIN.bind();
 

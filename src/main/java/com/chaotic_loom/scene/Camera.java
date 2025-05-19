@@ -8,6 +8,9 @@ public class Camera {
     // Core State
     private final Transform transform;
 
+    // Projection Parameters
+    private boolean orthographic = false;
+
     // Calculated Matrices
     private final Matrix4f viewMatrix;
     private final Matrix4f projectionMatrix;
@@ -21,6 +24,12 @@ public class Camera {
     private float aspectRatio;
     private float zNear;
     private float zFar;
+
+    // Ortho params
+    private float orthoLeft;
+    private float orthoRight;
+    private float orthoBottom;
+    private float orthoTop;
 
     public Camera(Transform transform) {
         this.transform = transform;
@@ -50,9 +59,15 @@ public class Camera {
     }
 
     private void recalculateProjectionMatrix() {
-        if (aspectRatio <= 0) aspectRatio = 1.0f;
-        projectionMatrix.identity().perspective(fovRadians, aspectRatio, zNear, zFar);
+        projectionMatrix.identity();
+        if (orthographic) {
+            projectionMatrix.ortho(orthoLeft, orthoRight, orthoBottom, orthoTop, zNear, zFar);
+        } else {
+            if (aspectRatio <= 0) aspectRatio = 1f;
+            projectionMatrix.perspective(fovRadians, aspectRatio, zNear, zFar);
+        }
     }
+
 
     // --- Setters for Projection ---
 
@@ -60,8 +75,20 @@ public class Camera {
 
     /** Sets the perspective projection parameters. */
     public void setPerspective(float fovDegrees, float aspectRatio, float zNear, float zFar) {
+        this.orthographic = false;
         this.fovRadians = (float) Math.toRadians(fovDegrees);
         this.aspectRatio = aspectRatio;
+        this.zNear = zNear;
+        this.zFar = zFar;
+        recalculateProjectionMatrix();
+    }
+
+    public void setOrthographic(float left, float right, float bottom, float top, float zNear, float zFar) {
+        this.orthographic = true;
+        this.orthoLeft = left;
+        this.orthoRight = right;
+        this.orthoBottom = bottom;
+        this.orthoTop = top;
         this.zNear = zNear;
         this.zFar = zFar;
         recalculateProjectionMatrix();
@@ -118,5 +145,13 @@ public class Camera {
     /** Gets the far clipping plane distance. */
     public float getFarPlane() {
         return zFar;
+    }
+
+    public float[] getOrthoBounds() {
+        return new float[]{orthoLeft, orthoRight, orthoBottom, orthoTop};
+    }
+
+    public boolean isOrthographic() {
+        return orthographic;
     }
 }
