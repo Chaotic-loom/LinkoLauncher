@@ -22,7 +22,7 @@ public class Scene {
 
     private final Camera camera;
 
-    private GameObject superCoolCube, idk;
+    private GameObject superCoolCube, idk, center;
 
     public Scene() {
         this.camera = new Camera();
@@ -52,6 +52,10 @@ public class Scene {
             GameObject cube = new GameObject(cubeMesh, Launcher.getInstance().getTextureManager().getTextureInfo("/textures/dirt.png"));
             cube.getTransform().setPosition(0, 0, -4 * i);
             gameObjects.add(cube);
+
+            if (i == 0) {
+                center = cube;
+            }
         }
 
         superCoolCube = cube1;
@@ -101,6 +105,8 @@ public class Scene {
         superCoolCube.getTransform().rotateAround(new Vector3f(), timer.getDeltaTime() * 50, 0, 1, 0);
 
         idk.getTransform().rotateAround(superCoolCube.getTransform().getPosition(), timer.getDeltaTime() * 1000, 1, 1, 1, true);
+
+        center.getTransform().setPosition(0, (float) Math.cos(timer.getTime()), 0);
 
         camera.getTransform().rotateAround(new Vector3f(), timer.getDeltaTime() * 10, (float) Math.sin(timer.getTime()), 1, (float) Math.cos(timer.getTime()), true);
         /*camera.getTransform().setPosition(
