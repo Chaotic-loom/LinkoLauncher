@@ -4,14 +4,6 @@ import com.chaotic_loom.core.Launcher;
 import com.chaotic_loom.core.Timer;
 import com.chaotic_loom.graphics.TextureAtlasInfo;
 import com.chaotic_loom.util.*;
-import imgui.ImGui;
-import imgui.ImGuiIO;
-import imgui.flag.ImGuiCond;
-import imgui.flag.ImGuiConfigFlags;
-import imgui.flag.ImGuiKey;
-import imgui.flag.ImGuiWindowFlags;
-import imgui.gl3.ImGuiImplGl3;
-import imgui.glfw.ImGuiImplGlfw;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -31,9 +23,6 @@ public class Scene {
     private final Camera camera;
 
     private GameObject superCoolCube, idk;
-
-    private final LogTail logTail = new LogTail(Paths.get("logs/last.log"));
-    private float scrollY = Float.MAX_VALUE; // AUTO‑scroll to bottom at first
 
     public Scene() {
         this.camera = new Camera();
@@ -104,63 +93,6 @@ public class Scene {
 
         if (renderStats.getTotalFrames() % (60 * 10) == 0) {
             Loggers.RENDERER.info(renderStats.getSummary());
-        }
-    }
-
-    public void runImGuiFrame(ImGuiImplGlfw imGuiGlfw, ImGuiImplGl3 imGuiGl3) {
-        imGuiGl3.newFrame();
-        imGuiGlfw.newFrame();
-        ImGui.newFrame();
-
-        logTail.update();
-
-        ImGuiIO io = ImGui.getIO();
-
-        float fullW = io.getDisplaySizeX();
-        float fullH = io.getDisplaySizeY();
-
-        // Next window will be at (0,0) and full size
-        ImGui.setNextWindowPos(0, 0, ImGuiCond.Always);
-        ImGui.setNextWindowSize(fullW, fullH, ImGuiCond.Always);
-
-        ImGui.begin("Realtime Log");
-
-        boolean up   = io.getKeysDown(ImGuiKey.UpArrow);
-        boolean down = io.getKeysDown(ImGuiKey.DownArrow);
-
-        ImGui.beginChild("LogScrollRegion",
-                0,
-                ImGui.getWindowHeight() - ImGui.getTextLineHeightWithSpacing(),
-                true,
-                ImGuiWindowFlags.HorizontalScrollbar
-        );
-
-        if (scrollY == Float.MAX_VALUE) {
-            ImGui.setScrollHereY(1.0f);
-            scrollY = ImGui.getScrollY();
-        }
-
-        for (String line : logTail.getLines()) {
-            ImGui.textUnformatted(line);
-        }
-
-        // Use io.getFontSize() — always valid
-        float lineH = io.getFontGlobalScale();
-        if (up)   scrollY = Math.max(0, scrollY - lineH);
-        if (down) scrollY = scrollY + lineH;
-        ImGui.setScrollY(scrollY);
-
-        ImGui.endChild();
-        ImGui.end();
-
-        ImGui.render();
-        imGuiGl3.renderDrawData(ImGui.getDrawData());
-
-        if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
-            final long backupWindowPtr = org.lwjgl.glfw.GLFW.glfwGetCurrentContext();
-            ImGui.updatePlatformWindows();
-            ImGui.renderPlatformWindowsDefault();
-            org.lwjgl.glfw.GLFW.glfwMakeContextCurrent(backupWindowPtr);
         }
     }
 

@@ -2,11 +2,6 @@ package com.chaotic_loom.graphics;
 
 import com.chaotic_loom.util.Loggers;
 import com.chaotic_loom.events.WindowEvents;
-import imgui.ImGui;
-import imgui.ImGuiIO;
-import imgui.flag.ImGuiConfigFlags;
-import imgui.gl3.ImGuiImplGl3;
-import imgui.glfw.ImGuiImplGlfw;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -28,11 +23,6 @@ public class Window {
     private boolean vsync = true;
 
     private int width, height;
-
-    protected ImGuiImplGlfw imGuiGlfw = new ImGuiImplGlfw();
-    protected ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
-
-    private String glslVersion = "#version 330 core";
 
     public Window(String title) {
         this.title = title;
@@ -114,16 +104,6 @@ public class Window {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         Loggers.WINDOW.info("OpenGL Initialized: {}", glGetString(GL_VERSION));
-
-        ImGui.createContext();
-
-        ImGuiIO io = ImGui.getIO();
-        //io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
-        io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
-        io.addConfigFlags(ImGuiConfigFlags.NavEnableKeyboard);
-
-        imGuiGlfw.init(windowHandle, true);
-        imGuiGl3.init(glslVersion);
     }
 
     public void update() {
@@ -186,13 +166,5 @@ public class Window {
 
     public float getAspectRatio() {
         return (float) this.width / this.height;
-    }
-
-    public ImGuiImplGl3 getImGuiGl3() {
-        return imGuiGl3;
-    }
-
-    public ImGuiImplGlfw getImGuiGlfw() {
-        return imGuiGlfw;
     }
 }

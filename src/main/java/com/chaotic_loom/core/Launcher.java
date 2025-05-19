@@ -80,7 +80,6 @@ public class Launcher {
 
             // --- Rendering ---
             this.scene.render(this.timer);
-            this.scene.runImGuiFrame(this.window.getImGuiGlfw(), this.window.getImGuiGl3());
             this.timer.frameRendered(); // Update FPS counter
 
             // --- Window update ---
