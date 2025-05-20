@@ -6,10 +6,7 @@ import com.chaotic_loom.graphics.TextureManager;
 import com.chaotic_loom.graphics.Window;
 import com.chaotic_loom.registries.RegistryManager;
 import com.chaotic_loom.input.InputManager;
-import com.chaotic_loom.util.FlagManager;
-import com.chaotic_loom.util.Loggers;
-import com.chaotic_loom.util.OSDetector;
-import com.chaotic_loom.util.UpdateManager;
+import com.chaotic_loom.util.*;
 
 public class Launcher {
     private final Window window;
@@ -17,6 +14,7 @@ public class Launcher {
     private final TextureManager textureManager;
     private final Timer timer;
     private final InputManager inputManager;
+    private final Network network;
 
     private final Scene scene;
 
@@ -38,12 +36,19 @@ public class Launcher {
         this.textureManager = new TextureManager();
         this.timer = new Timer();
         this.inputManager = new InputManager();
+        this.network = new Network();
 
         this.scene = new Scene();
     }
 
     public void init() {
         Loggers.LAUNCHER.info("OS: {}, Distro: {}", os, distro);
+
+        try {
+            network.connectNewWifi("La wifi del furro", "Jopelines"); // Don't bother stealing this lol, is a temporal password as you can see xd
+        } catch (Exception e) {
+            Loggers.LAUNCHER.error(e);
+        }
 
         if (FlagManager.flagExists(FlagManager.BOOT_FLAGS, "updated")) {
             Loggers.LAUNCHER.info("The launcher has been updated!");
