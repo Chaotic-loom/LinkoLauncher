@@ -20,7 +20,9 @@ public class OSHelper {
         OSHelper.executeCommand("sudo reboot");
     }
 
-    public static void executeCommand(String command) {
+    public static String executeCommand(String command) {
+        StringBuilder result = new StringBuilder();
+
         try {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
@@ -36,9 +38,13 @@ public class OSHelper {
             BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             while ((line = errorReader.readLine()) != null) {
                 Loggers.LAUNCHER.error(line);
+                result.append(line).append("\n");
             }
         } catch (Exception e) {
             Loggers.LAUNCHER.error(e);
+            result.append(e.getMessage()).append("\n");
         }
+
+        return result.toString();
     }
 }

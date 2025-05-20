@@ -2,6 +2,7 @@ package com.chaotic_loom.input;
 
 import com.chaotic_loom.graphics.Window;
 import com.chaotic_loom.util.Loggers;
+import org.lwjgl.glfw.GLFWCharCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
@@ -27,6 +28,10 @@ public class InputManager {
     private GLFWCursorPosCallback cursorPosCallback;
     private GLFWMouseButtonCallback mouseButtonCallback;
 
+    private boolean typingMode = false;
+    private final StringBuilder typedText = new StringBuilder();
+    private GLFWCharCallback charCallback;
+
     public InputManager() {
         // Initialize arrays to false
         Arrays.fill(keys, false);
@@ -45,6 +50,13 @@ public class InputManager {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
                 if (key >= 0 && key <= GLFW_KEY_LAST) {
+                    if (typingMode) {
+                        if (key == GLFW_KEY_BACKSPACE && action == GLFW_PRESS) handleBackspace();
+                        if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) keys[key] = true;
+
+                        return;
+                    }
+
                     if (action == GLFW_PRESS) {
                         keys[key] = true;
                         // Can add logic here for single-press actions if needed
@@ -53,11 +65,6 @@ public class InputManager {
                         // Can add logic here for release actions
                     }
                     // GLFW_REPEAT is ignored for simple state tracking
-                }
-
-                // Example: Close window on ESCAPE release (can be handled here or in engine)
-                if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
-                    glfwSetWindowShouldClose(window, true);
                 }
             }
         };
@@ -94,6 +101,14 @@ public class InputManager {
             }
         };
         glfwSetMouseButtonCallback(windowHandle, mouseButtonCallback);
+
+        charCallback = new GLFWCharCallback() {
+            @Override
+            public void invoke(long window, int codepoint) {
+                // Append valid UTF-16 characters
+                typedText.appendCodePoint(codepoint);
+            }
+        };
 
         // Initialize previous positions
         // Fetch initial cursor position in case callback hasn't fired yet
@@ -240,5 +255,42 @@ public class InputManager {
         }
 
         Loggers.INPUT.info("Input Manager Cleaned Up.");
+    }
+
+    public void startTextInput(long windowHandle) {
+        if (typingMode) return;
+        typingMode = true;
+        typedText.setLength(0);
+        // Capture both char events and prevent ESC from closing window in typing mode:
+        glfwSetCharCallback(windowHandle, charCallback);
+        // Optionally disable key repeat handling so char callback is the only source
+        // You can also choose to swallow key presses here
+
+        Arrays.fill(keys, false);
+    }
+
+    public String stopTextInput(long windowHandle) {
+        if (!typingMode) return "";
+        typingMode = false;
+        // Uninstall the char callback
+        glfwSetCharCallback(windowHandle, null);
+        return typedText.toString();
+    }
+
+    private void handleBackspace() {
+        if (typedText.length() > 0) {
+            // Remove last code point (to handle Unicode properly)
+            int cp = typedText.codePointBefore(typedText.length());
+            int charCount = Character.charCount(cp);
+            typedText.setLength(typedText.length() - charCount);
+        }
+    }
+
+    public StringBuilder getTypedText() {
+        return typedText;
+    }
+
+    public boolean isTypingMode() {
+        return typingMode;
     }
 }

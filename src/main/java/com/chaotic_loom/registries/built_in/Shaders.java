@@ -9,7 +9,7 @@ import com.chaotic_loom.registries.Registry;
 
 public class Shaders extends AbstractRegistryInitializer {
     public static ShaderProgram MAIN;
-    public static ShaderProgram GUI;
+    public static ShaderProgram FONT;
 
     @Override
     public void register() {
@@ -18,6 +18,13 @@ public class Shaders extends AbstractRegistryInitializer {
                 new Identifier(Constants.REGISTRY_NAMESPACE, "main"),
                 new ShaderProgram("/shaders/main.vert", "/shaders/main.frag")
                         .createUniform("projectionMatrix", "viewMatrix", "tintColor", "textureSampler")
+        );
+
+        FONT = Registry.register(
+                Registries.SHADER,
+                new Identifier(Constants.REGISTRY_NAMESPACE, "font"),
+                new ShaderProgram("/shaders/font.vert", "/shaders/font.frag")
+                        .createUniform("projectionMatrix", "viewMatrix", "model", "tintColor", "textureSampler")
         );
     }
 }

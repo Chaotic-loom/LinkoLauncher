@@ -1,7 +1,9 @@
 package com.chaotic_loom.scene;
 
 import com.chaotic_loom.util.Loggers;
+import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,6 +68,50 @@ public class Texture {
         uploadTextureData(imageBuffer);
         stbi_image_free(imageBuffer);
     }
+
+    @Deprecated
+    public void loadFromClasspath2(String resourcePath) throws Exception {
+        // 1) Read entire PNG into a direct buffer
+        ByteBuffer pngBuffer;
+        try (InputStream in = Texture.class.getResourceAsStream(resourcePath)) {
+            if (in == null) throw new IOException("Resource not found: " + resourcePath);
+            byte[] bytes = in.readAllBytes();
+            pngBuffer = MemoryUtil.memAlloc(bytes.length);
+            pngBuffer.put(bytes).flip();
+        }
+
+        // 2) Decode PNG to RGBA
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer w = stack.mallocInt(1);
+            IntBuffer h = stack.mallocInt(1);
+            IntBuffer comp = stack.mallocInt(1);
+
+            // 0 = force original channels; use 4 to always get RGBA
+            ByteBuffer decoded = STBImage.stbi_load_from_memory(pngBuffer, w, h, comp, 4);
+            if (decoded == null) {
+                throw new RuntimeException("Failed to decode image: " + STBImage.stbi_failure_reason());
+            }
+
+            this.width  = w.get(0);
+            this.height = h.get(0);
+
+            // 3) Upload to OpenGL
+            glBindTexture(GL_TEXTURE_2D, textureId);
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
+                    GL_RGBA, GL_UNSIGNED_BYTE, decoded);
+            glGenerateMipmap(GL_TEXTURE_2D);
+
+            // 4) Free STB buffer
+            STBImage.stbi_image_free(decoded);
+        } finally {
+            // Always free the original PNG buffer
+            MemoryUtil.memFree(pngBuffer);
+        }
+    }
+
 
     @Deprecated
     public void loadFromFile(Path filePath) throws Exception {

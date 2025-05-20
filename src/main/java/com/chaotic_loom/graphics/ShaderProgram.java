@@ -72,7 +72,7 @@ public class ShaderProgram extends RegistryObject {
         glCompileShader(shaderId);
 
         if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) {
-            throw new RuntimeException("Error compiling Shader code: " + glGetShaderInfoLog(shaderId, 1024));
+            throw new RuntimeException("Error compiling Shader code: " + glGetShaderInfoLog(shaderId, 1024) + ", code: " + shaderCode);
         }
 
         glAttachShader(programId, shaderId);

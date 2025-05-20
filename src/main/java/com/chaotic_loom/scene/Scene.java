@@ -3,6 +3,9 @@ package com.chaotic_loom.scene;
 import com.chaotic_loom.core.Launcher;
 import com.chaotic_loom.core.Timer;
 import com.chaotic_loom.graphics.TextureAtlasInfo;
+import com.chaotic_loom.graphics.Window;
+import com.chaotic_loom.graphics.font.Font;
+import com.chaotic_loom.graphics.font.Text;
 import com.chaotic_loom.util.*;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -29,6 +32,10 @@ public class Scene {
     private final Camera guiCamera;
 
     private GameObject superCoolCube, idk, center;
+
+    private Font font;
+    private Text ssidText;
+    private Text passText;
 
     public Scene() {
         this.camera = new Camera();
@@ -91,6 +98,10 @@ public class Scene {
             }
         }
 
+        font = new Font("/fonts/arial");
+        ssidText = new Text("Command");
+        passText = new Text("Result");
+
         superCoolCube = cube1;
         idk = cube2;
     }
@@ -133,6 +144,14 @@ public class Scene {
         glDisable(GL_DEPTH_TEST);
         Launcher.getInstance().getRenderer().render(guiCamera, atlasGuiRenderBatch, renderStats);
 
+        Window window = Launcher.getInstance().getWindow();
+
+        //glEnable(GL_BLEND);
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        font.renderText(guiCamera, ssidText, -window.getWidth() / 2, window.getHeight() / 2, 0, 0, 0, 0, 1f);
+        font.renderText(guiCamera, passText, -window.getWidth() / 2, window.getHeight() / 2 - 25, 0, 0, 0, 0, 1f);
+        //glDisable(GL_BLEND);
+
         if (renderStats.getTotalFrames() % (60 * 10) == 0) {
             Loggers.RENDERER.info(renderStats.getSummary());
         }
@@ -158,7 +177,26 @@ public class Scene {
         }
 
         if (Launcher.getInstance().getInputManager().isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
+            OSHelper.executeCommand("sudo systemctl stop kiosk.service");
             System.exit(0);
+        }
+
+        if (Launcher.getInstance().getInputManager().isKeyPressed(GLFW.GLFW_KEY_T) && !Launcher.getInstance().getInputManager().isTypingMode()) {
+            Launcher.getInstance().getInputManager().startTextInput(Launcher.getInstance().getWindow().getWindowHandle());
+        }
+
+        String newText = Launcher.getInstance().getInputManager().getTypedText().toString();
+        if (!newText.isBlank()) {
+            ssidText.setText(newText);
+        }
+
+        if (Launcher.getInstance().getInputManager().isKeyPressed(GLFW.GLFW_KEY_ENTER) && Launcher.getInstance().getInputManager().isTypingMode()) {
+            String text = Launcher.getInstance().getInputManager().stopTextInput(Launcher.getInstance().getWindow().getWindowHandle());
+
+            ssidText.setText(text);
+
+            String result = OSHelper.executeCommand(text);
+            passText.setText(result);
         }
     }
 }
