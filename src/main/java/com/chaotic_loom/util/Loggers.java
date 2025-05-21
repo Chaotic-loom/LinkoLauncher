@@ -14,4 +14,5 @@ public class Loggers {
     public static Logger REGISTRY = LogManager.getLogger(Registry.class.getSimpleName());
     public static Logger TEXTURE_MANAGER = LogManager.getLogger(Renderer.class.getSimpleName());
     public static Logger INPUT = LogManager.getLogger(Renderer.class.getSimpleName());
+    public static Logger NETWORK = LogManager.getLogger(Network.class.getSimpleName());
 }

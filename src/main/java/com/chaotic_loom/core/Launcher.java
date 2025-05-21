@@ -137,4 +137,8 @@ public class Launcher {
     public OSDetector.Distro getDistro() {
         return distro;
     }
+
+    public Network getNetwork() {
+        return network;
+    }
 }

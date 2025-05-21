@@ -84,17 +84,24 @@ public class Network {
      * @throws IOException          if the nmcli command fails
      * @throws InterruptedException if the process is interrupted
      */
-    public boolean isConnected() throws IOException, InterruptedException {
+    public boolean isConnected() {
         List<String> cmd = List.of(
                 "nmcli", "-t", "-f", "DEVICE,STATE", "dev"
         );
-        List<String> output = runCommand(cmd);
-        for (String line : output) {
-            // lines like "wlan0:connected"
-            if (line.contains(":connected")) {
-                return true;
+
+        try {
+            List<String> output = runCommand(cmd);
+            for (String line : output) {
+                // lines like "wlan0:connected"
+                if (line.contains(":connected")) {
+                    return true;
+                }
             }
+        } catch (Exception e) {
+            Loggers.NETWORK.error("Error checking connectivity!");
+            Loggers.NETWORK.error(e);
         }
+
         return false;
     }
 

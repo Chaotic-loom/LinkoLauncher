@@ -1,5 +1,7 @@
 package com.chaotic_loom.util;
 
+import com.chaotic_loom.core.Launcher;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -10,16 +12,24 @@ public class UpdateManager {
     public static final String CURRENT_VERSION = FlagManager.readJarFlag("version");
 
     public static void update() {
+        if (!Launcher.getInstance().getNetwork().isConnected()) {
+            Loggers.LAUNCHER.warn("Not connected to the internet! Cant check for updates!");
+            return;
+        }
+
         boolean isLatest = UpdateManager.isCurrentLatest();
         Loggers.LAUNCHER.info("Is latest version: {}", isLatest);
 
         if (isLatest) {
+            Loggers.LAUNCHER.info("Latest version, we dont need to update!");
             return;
         }
 
-        downloadFile();
-
-        OSHelper.reboot();
+        boolean downloaded = downloadFile();
+        if (downloaded) {
+            Loggers.LAUNCHER.info("Update downloaded! Rebooting");
+            OSHelper.reboot();
+        }
     }
 
     public static boolean isCurrentLatest() {
@@ -31,7 +41,7 @@ public class UpdateManager {
         return Objects.equals(CURRENT_VERSION, latest);
     }
 
-    public static void downloadFile() {
+    public static boolean downloadFile() {
         String fileUrl = "https://chaotic-loom.com/download_latest";
         String savePath = "/opt/linko/launcher/";
         String fileName = "Update.jar";
@@ -64,10 +74,13 @@ public class UpdateManager {
             in.close();
 
             Loggers.LAUNCHER.info("File downloaded successfully to: {}{}", savePath, fileName);
-            Loggers.LAUNCHER.info("Update downloaded!");
+
+            return true;
         } catch (IOException e) {
             Loggers.LAUNCHER.error(e);
         }
+
+        return false;
     }
 
     public static String fetchLatestRelease() {
