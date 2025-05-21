@@ -19,8 +19,6 @@ public class UpdateManager {
 
         downloadFile();
 
-        Loggers.LAUNCHER.info("Update downloaded!");
-
         OSHelper.reboot();
     }
 
@@ -66,6 +64,7 @@ public class UpdateManager {
             in.close();
 
             Loggers.LAUNCHER.info("File downloaded successfully to: {}{}", savePath, fileName);
+            Loggers.LAUNCHER.info("Update downloaded!");
         } catch (IOException e) {
             Loggers.LAUNCHER.error(e);
         }
