@@ -3,7 +3,9 @@ package com.chaotic_loom.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 public class Network {
@@ -85,15 +87,16 @@ public class Network {
      * @throws InterruptedException if the process is interrupted
      */
     public boolean isConnected() {
-        List<String> cmd = List.of(
-                "nmcli", "-t", "-f", "DEVICE,STATE", "dev"
-        );
-
         try {
-            List<String> output = runCommand(cmd);
-            for (String line : output) {
-                // lines like "wlan0:connected"
-                if (line.contains(":connected")) {
+            Enumeration<NetworkInterface> ifs = NetworkInterface.getNetworkInterfaces();
+            while (ifs.hasMoreElements()) {
+                NetworkInterface nif = ifs.nextElement();
+                if (nif.isLoopback()) {
+                    // skip the loopback interface
+                    continue;
+                }
+                if (nif.isUp()) {
+                    // you’ve found a real, up interface
                     return true;
                 }
             }
