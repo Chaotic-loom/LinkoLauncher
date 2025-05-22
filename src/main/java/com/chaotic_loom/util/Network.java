@@ -22,8 +22,8 @@ public class Network {
      */
     public void connectNewWifi(String ssid, String password) throws IOException, InterruptedException {
         List<String> cmd = List.of(
-                "nmcli", "dev", "wifi", "connect", ssid,
-                "password", password
+                "nmcli", "dev", "wifi", "connect", "\"" + ssid + "\"",
+                "password", "\"" + password + "\""
         );
         runCommand(cmd);
     }
@@ -37,7 +37,7 @@ public class Network {
      */
     public void connectKnownWifi(String ssid) throws IOException, InterruptedException {
         List<String> cmd = List.of(
-                "nmcli", "con", "up", ssid
+                "nmcli", "con", "up", "\"" + ssid + "\""
         );
         runCommand(cmd);
     }
@@ -74,7 +74,7 @@ public class Network {
      */
     public void forgetWifi(String ssid) throws IOException, InterruptedException {
         List<String> cmd = List.of(
-                "nmcli", "con", "delete", ssid
+                "nmcli", "con", "delete", "\"" + ssid + "\""
         );
         runCommand(cmd);
     }
