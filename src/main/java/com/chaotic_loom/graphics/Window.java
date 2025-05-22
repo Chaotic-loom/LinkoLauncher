@@ -1,7 +1,9 @@
 package com.chaotic_loom.graphics;
 
+import com.chaotic_loom.core.Launcher;
 import com.chaotic_loom.util.Loggers;
 import com.chaotic_loom.events.WindowEvents;
+import com.chaotic_loom.util.OSDetector;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -62,6 +64,8 @@ public class Window {
             throw new IllegalStateException("Unable to query video mode");
         }
 
+        this.updateSizeData(vidmode);
+
         // Create the fullscreen window
         windowHandle = glfwCreateWindow(this.width, this.height, title, monitor, NULL);
         if (windowHandle == NULL) {
@@ -70,6 +74,7 @@ public class Window {
 
         // Setup resize callback
         glfwSetFramebufferSizeCallback(windowHandle, (window, w, h) -> {
+            this.updateSizeData(vidmode);
             glViewport(0, 0, w, h);
             WindowEvents.RESIZE.invoker().onEvent(this, w, h);
         });
@@ -127,6 +132,14 @@ public class Window {
     }
 
     public void updateSizeData(GLFWVidMode vidmode) {
+        if (Launcher.getInstance().getOs() != OSDetector.OS.LINUX) {
+            return;
+        }
+
+        if (Launcher.getInstance().getDistro() != OSDetector.Distro.LINKO) {
+            return;
+        }
+
         this.width = vidmode.width();
         this.height = vidmode.height();
     }
