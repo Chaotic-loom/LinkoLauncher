@@ -81,7 +81,49 @@ tasks.withType(Jar).configureEach {
     dependsOn(tasks.named('cleanExtra'))
 }
 
+tasks.register('IDESetUp') {
+    group = 'setup'
+    description = 'Crea el directorio run si no existe'
+
+    doLast {
+        def runDir = file("${projectDir}/run")
+        if (!runDir.exists()) {
+            println "Creando directorio: ${runDir}"
+            runDir.mkdirs()
+        } else {
+            println "El directorio ya existe: ${runDir}"
+        }
+    }
+}
+
+// Linux build
+
+tasks.register('buildLinux', GradleBuild) {
+    dependsOn 'IDESetUp'
+    tasks = ['jar']
+    startParameter.projectProperties = [
+            'platform': 'linux',
+            'fileName': "${fileName}-linux"
+    ]
+}
+
+tasks.register('runLinux') {
+    dependsOn 'buildLinux'
+    doLast {
+        // Execute the built JAR
+        javaexec {
+            workingDir = file("$rootDir/run/")
+
+            classpath = files("$buildDir/libs/${fileName}-linux-${version}.jar")
+            mainClass = 'com.chaotic_loom.core.Main'
+        }
+    }
+}
+
+// Windows build, ewww
+
 tasks.register('buildWindows', GradleBuild) {
+    dependsOn 'IDESetUp'
     tasks = ['jar']
     startParameter.projectProperties = [
             'platform': 'windows',

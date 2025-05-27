@@ -21,6 +21,14 @@ public class OSHelper {
     }
 
     public static String executeCommand(String command) {
+        if (Launcher.getInstance().getOs() != OSDetector.OS.LINUX) {
+            return null;
+        }
+
+        if (Launcher.getInstance().getDistro() != OSDetector.Distro.LINKO) {
+            return null;
+        }
+
         StringBuilder result = new StringBuilder();
 
         try {

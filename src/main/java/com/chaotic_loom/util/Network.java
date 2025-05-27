@@ -1,5 +1,7 @@
 package com.chaotic_loom.util;
 
+import com.chaotic_loom.core.Launcher;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -118,6 +120,14 @@ public class Network {
      */
     private List<String> runCommand(List<String> command)
             throws IOException, InterruptedException {
+        if (Launcher.getInstance().getOs() != OSDetector.OS.LINUX) {
+            return null;
+        }
+
+        if (Launcher.getInstance().getDistro() != OSDetector.Distro.LINKO) {
+            return null;
+        }
+
         ProcessBuilder pb = new ProcessBuilder(command);
         Process process = pb.start();
 
