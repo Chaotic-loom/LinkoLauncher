@@ -120,10 +120,6 @@ tasks.register('runLinux', JavaExec) {
     // Optional: set default debug port
     jvmArgs = [
             "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
-            // enable Wayland instead of X11
-            //"-Dsun.java2d.x11.enableWayland=true",
-            // disable XRender fallback
-            //"-Dsun.java2d.xrender=false",
             "-Dorg.lwjgl.util.Debug=true",
             "-Dorg.lwjgl.util.DebugLoader=true"
     ]
