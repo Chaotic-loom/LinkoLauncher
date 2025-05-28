@@ -107,18 +107,31 @@ tasks.register('buildLinux', GradleBuild) {
     ]
 }
 
-tasks.register('runLinux') {
+tasks.register('runLinux', JavaExec) {
     dependsOn 'buildLinux'
-    doLast {
-        // Execute the built JAR
-        javaexec {
-            workingDir = file("$rootDir/run/")
 
-            classpath = files("$buildDir/libs/${fileName}-linux-${version}.jar")
-            mainClass = 'com.chaotic_loom.core.Main'
-        }
-    }
+    group = 'application'
+    description = 'Runs the Linux build in debuggable JVM'
+
+    workingDir = file("$rootDir/run/")
+    classpath = files("$buildDir/libs/${fileName}-linux-${version}.jar")
+    mainClass.set("com.chaotic_loom.core.Main")
+
+    // Optional: set default debug port
+    jvmArgs = [
+            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
+            // enable Wayland instead of X11
+            //"-Dsun.java2d.x11.enableWayland=true",
+            // disable XRender fallback
+            //"-Dsun.java2d.xrender=false",
+            "-Dorg.lwjgl.util.Debug=true",
+            "-Dorg.lwjgl.util.DebugLoader=true"
+    ]
+
+    // force any GTK-based UI to speak Wayland
+    environment "GDK_BACKEND", "wayland"
 }
+
 
 // Windows build, ewww
 

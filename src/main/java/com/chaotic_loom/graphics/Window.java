@@ -41,6 +41,8 @@ public class Window {
             throw new IllegalStateException("Unable to initialize GLFW");
         }
 
+        Loggers.WINDOW.info("Platform: {}", RenderPlatform.getRenderPlatform());
+
         // Configure GLFW
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
@@ -179,5 +181,23 @@ public class Window {
 
     public float getAspectRatio() {
         return (float) this.width / this.height;
+    }
+
+    public enum RenderPlatform {
+        ANY, WIN32, COCOA, WAYLAND, X11, NULL;
+
+        public static RenderPlatform getRenderPlatform() {
+            int platform = glfwGetPlatform();
+
+            return switch (platform) {
+                case GLFW_ANY_PLATFORM -> ANY;
+                case GLFW_PLATFORM_WIN32 -> WIN32;
+                case GLFW_PLATFORM_COCOA -> COCOA;
+                case GLFW_PLATFORM_WAYLAND -> WAYLAND;
+                case GLFW_PLATFORM_X11 -> X11;
+                case GLFW_PLATFORM_NULL -> NULL;
+                default -> throw new IllegalStateException("Unexpected platform: " + platform);
+            };
+        }
     }
 }
