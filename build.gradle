@@ -124,8 +124,8 @@ tasks.register('runLinux', JavaExec) {
             "-Dorg.lwjgl.util.DebugLoader=true"
     ]
 
-    // force any GTK-based UI to speak Wayland
     environment "GDK_BACKEND", "wayland"
+    environment "__GL_THREADED_OPTIMIZATIONS", "0"
 }
 
 
