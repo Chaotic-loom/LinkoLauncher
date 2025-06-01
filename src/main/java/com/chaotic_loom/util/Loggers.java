@@ -1,5 +1,6 @@
 package com.chaotic_loom.util;
 
+import com.chaotic_loom.core.CrashHandler;
 import com.chaotic_loom.core.Launcher;
 import com.chaotic_loom.graphics.Renderer;
 import com.chaotic_loom.graphics.Window;
@@ -15,4 +16,5 @@ public class Loggers {
     public static Logger TEXTURE_MANAGER = LogManager.getLogger(Renderer.class.getSimpleName());
     public static Logger INPUT = LogManager.getLogger(Renderer.class.getSimpleName());
     public static Logger NETWORK = LogManager.getLogger(Network.class.getSimpleName());
+    public static Logger CRASH_HANDLER = LogManager.getLogger(CrashHandler.class.getSimpleName());
 }

@@ -15,6 +15,7 @@ import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.GL_SHADING_LANGUAGE_VERSION;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -25,6 +26,12 @@ public class Window {
     private boolean vsync = true;
 
     private int width, height;
+
+    // Stats / Extra data
+    private String glfw_GL_RENDERER;
+    private String glfw_GL_VENDOR;
+    private String glfw_GL_VERSION;
+    private String glfw_GL_SHADING_LANGUAGE_VERSION;
 
     public Window(String title) {
         this.title = title;
@@ -109,6 +116,8 @@ public class Window {
         // Set the clear color (White)
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
+        collectGLFWData();
+
         Loggers.WINDOW.info("OpenGL Initialized: {}", glGetString(GL_VERSION));
     }
 
@@ -123,6 +132,13 @@ public class Window {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         }
+    }
+
+    private void collectGLFWData() {
+        glfw_GL_RENDERER = glGetString(GL_RENDERER);
+        glfw_GL_VENDOR = glGetString(GL_VENDOR);
+        glfw_GL_VERSION = glGetString(GL_VERSION);
+        glfw_GL_SHADING_LANGUAGE_VERSION= glGetString(GL_SHADING_LANGUAGE_VERSION);
     }
 
     public void update() {
@@ -193,6 +209,22 @@ public class Window {
 
     public float getAspectRatio() {
         return (float) this.width / this.height;
+    }
+
+    public String glfw_GL_RENDERER() {
+        return glfw_GL_RENDERER;
+    }
+
+    public String glfw_GL_VENDOR() {
+        return glfw_GL_VENDOR;
+    }
+
+    public String glfw_GL_VERSION() {
+        return glfw_GL_VERSION;
+    }
+
+    public String glfw_GL_SHADING_LANGUAGE_VERSION() {
+        return glfw_GL_SHADING_LANGUAGE_VERSION;
     }
 
     public enum RenderPlatform {

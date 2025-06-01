@@ -181,6 +181,10 @@ public class Scene {
             System.exit(0);
         }
 
+        if (Launcher.getInstance().getInputManager().isKeyPressed(GLFW.GLFW_KEY_U)) {
+            throw new RuntimeException();
+        }
+
         if (Launcher.getInstance().getInputManager().isKeyPressed(GLFW.GLFW_KEY_T) && !Launcher.getInstance().getInputManager().isTypingMode()) {
             Launcher.getInstance().getInputManager().startTextInput(Launcher.getInstance().getWindow().getWindowHandle());
         }

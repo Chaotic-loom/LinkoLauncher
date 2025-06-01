@@ -42,13 +42,11 @@ public class Launcher {
     }
 
     public void init() {
-        Loggers.LAUNCHER.info("OS: {}, Distro: {}", os, distro);
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            CrashHandler.handleCrash("Uncaught exception in thread \"" + t.getName() + "\"", e);
+        });
 
-        try {
-            network.connectNewWifi("La wifi del furro", "Jopelines"); // Don't bother stealing this lol, is a temporal password as you can see xd
-        } catch (Exception e) {
-            Loggers.LAUNCHER.error(e);
-        }
+        Loggers.LAUNCHER.info("OS: {}, Distro: {}", os, distro);
 
         if (FlagManager.flagExists(FlagManager.BOOT_FLAGS, "updated")) {
             Loggers.LAUNCHER.info("The launcher has been updated!");

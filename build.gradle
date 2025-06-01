@@ -39,6 +39,8 @@ dependencies {
 
     // Reflection
     implementation "org.reflections:reflections:${reflectionVersion}"
+
+    implementation 'com.googlecode.lanterna:lanterna:3.1.2'
 }
 
 tasks.register('generateVersionFile') {
@@ -120,8 +122,8 @@ tasks.register('runLinux', JavaExec) {
     // Optional: set default debug port
     jvmArgs = [
             "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
-            "-Dorg.lwjgl.util.Debug=true",
-            "-Dorg.lwjgl.util.DebugLoader=true"
+            "-Dorg.lwjgl.util.Debug=false",
+            "-Dorg.lwjgl.util.DebugLoader=false"
     ]
 
     environment "GDK_BACKEND", "wayland"
