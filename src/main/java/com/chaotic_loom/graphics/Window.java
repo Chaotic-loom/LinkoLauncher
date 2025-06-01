@@ -47,9 +47,8 @@ public class Window {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-        // Request OpenGL 3.3 Core profile
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        // Request OpenGL Core profile
+        setUpGLFWContextVersion();
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
@@ -111,6 +110,19 @@ public class Window {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         Loggers.WINDOW.info("OpenGL Initialized: {}", glGetString(GL_VERSION));
+    }
+
+    public void setUpGLFWContextVersion() {
+        OSDetector.OS os = Launcher.getInstance().getOs();
+        OSDetector.Distro distro = Launcher.getInstance().getDistro();
+
+        if (os == OSDetector.OS.LINUX && distro == OSDetector.Distro.LINKO) {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+        } else {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        }
     }
 
     public void update() {
