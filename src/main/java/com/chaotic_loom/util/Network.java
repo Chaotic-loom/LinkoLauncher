@@ -82,33 +82,46 @@ public class Network {
     }
 
     /**
-     * Check if any Wi‑Fi connection is currently active.
+     * Check if there is an active (connected) interface of type Wi-Fi or Ethernet.
      *
-     * @return true if connected, false otherwise
+     * @return true if at least one wifi or ethernet device is in state "connected"; false otherwise
      * @throws IOException          if the nmcli command fails
      * @throws InterruptedException if the process is interrupted
      */
     public boolean isConnected() {
         try {
-            Enumeration<NetworkInterface> ifs = NetworkInterface.getNetworkInterfaces();
-            while (ifs.hasMoreElements()) {
-                NetworkInterface nif = ifs.nextElement();
-                if (nif.isLoopback()) {
-                    // skip the loopback interface
-                    continue;
-                }
-                if (nif.isUp()) {
-                    // you’ve found a real, up interface
-                    return true;
+            // Run: nmcli -t -f TYPE,STATE dev
+            List<String> cmd = List.of(
+                    "nmcli", "-t", "-f", "TYPE,STATE", "dev"
+            );
+            List<String> output = runCommand(cmd);
+
+            if (output == null) {
+                Loggers.NETWORK.error("nmcli failed checking connectivity!");
+                return false;
+            }
+
+            for (String line : output) {
+                // Each line looks like: "wifi:connected" or "ethernet:disconnected"
+                String[] parts = line.split(":");
+                if (parts.length == 2) {
+                    String type = parts[0];
+                    String state = parts[1];
+                    if (("wifi".equals(type) || "ethernet".equals(type))
+                            && "connected".equals(state)) {
+                        return true;
+                    }
                 }
             }
-        } catch (Exception e) {
-            Loggers.NETWORK.error("Error checking connectivity!");
-            Loggers.NETWORK.error(e);
-        }
 
-        return false;
+            return false;
+        } catch (Throwable e) {
+            Loggers.NETWORK.error(e);
+            e.printStackTrace();
+            return false;
+        }
     }
+
 
     /**
      * Helper to run a command with a timeout, capture stdout, and throw on non-zero exit.
