@@ -100,12 +100,9 @@ public class CrashHandler {
         }
 
         Launcher.getInstance().getWindow().cleanup();
-
-        //new Thread(CrashHandler::launchTerminal, "Crash handler terminal").start();
-        launchTerminal();
     }
 
-    private static void launchTerminal() {
+    public static void launchTerminal() {
         try {
             // 1) Create a Terminal and Screen
             DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory();
