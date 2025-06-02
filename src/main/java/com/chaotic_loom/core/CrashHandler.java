@@ -95,6 +95,8 @@ public class CrashHandler {
             Loggers.CRASH_HANDLER.error("A crash report has been saved to: {}", crashFile.toAbsolutePath());
         } catch (IOException ioEx) {
             Loggers.CRASH_HANDLER.error("Failed to write crash report: {}", ioEx.getMessage());
+            Loggers.CRASH_HANDLER.error(t);
+            throw new RuntimeException(t);
         }
 
         Launcher.getInstance().getWindow().cleanup();
