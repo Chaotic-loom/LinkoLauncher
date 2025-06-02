@@ -141,19 +141,19 @@ public class CrashHandler {
             optionsPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
             optionsPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
 
-            Button opt1 = new Button("Option 1", () -> {
+            Button opt1 = new Button("Exit", () -> {
                 // ← Code to run when “Option 1” is selected:
                 // For demo, just print to the terminal & close the menu
                 System.out.println("You chose Option 1!");
-                gui.getActiveWindow().close();
+                System.exit(0);
             });
-            Button opt2 = new Button("Option 2", () -> {
+            Button opt2 = new Button("Restart", () -> {
                 System.out.println("You chose Option 2!");
-                gui.getActiveWindow().close();
+                System.exit(1);
             });
             Button opt3 = new Button("Option 3", () -> {
                 System.out.println("You chose Option 3!");
-                gui.getActiveWindow().close();
+                System.exit(3);
             });
 
             // Center each option button horizontally
@@ -176,11 +176,11 @@ public class CrashHandler {
 
             Button btnA = new Button("Button A", () -> {
                 System.out.println("Button A clicked!");
-                gui.getActiveWindow().close();
+                System.exit(3);
             });
             Button btnB = new Button("Button B", () -> {
                 System.out.println("Button B clicked!");
-                gui.getActiveWindow().close();
+                System.exit(3);
             });
 
             bottomButtons.addComponent(btnA);
