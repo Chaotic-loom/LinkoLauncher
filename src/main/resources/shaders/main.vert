@@ -1,4 +1,4 @@
-#version 330 core
+#version 310 es
 
 // Input vertex data (per-vertex)
 layout (location=0) in vec3 position;

@@ -1,4 +1,5 @@
-#version 330 core
+#version 310 es
+precision mediump float;
 
 // Inputs from the vertex shader
 in vec2 outTexCoord;

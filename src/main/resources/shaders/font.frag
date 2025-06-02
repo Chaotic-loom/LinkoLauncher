@@ -1,4 +1,5 @@
-#version 330 core
+#version 310 es
+precision mediump float;
 
 in vec2 TexCoords;                 // from vertex shader
 out vec4 FragColor;                // final fragment color

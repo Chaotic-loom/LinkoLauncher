@@ -62,10 +62,10 @@ public class CrashHandler {
                     if (GLFW.glfwInit()) {
                         Window window = Launcher.getInstance().getWindow();
 
-                        out.write("Renderer: " + window.glfw_GL_RENDERER() + "\n");
-                        out.write("Vendor:   " + window.glfw_GL_VENDOR() + "\n");
-                        out.write("Version:  " + window.glfw_GL_VERSION() + "\n");
-                        out.write("GLSL:     " + window.glfw_GL_SHADING_LANGUAGE_VERSION() + "\n");
+                        out.write("GL Renderer:  " + window.glfw_GL_RENDERER() + "\n");
+                        out.write("GL Vendor:    " + window.glfw_GL_VENDOR() + "\n");
+                        out.write("GL Version:   " + window.glfw_GL_VERSION() + "\n");
+                        out.write("GLSL Version: " + window.glfw_GL_SHADING_LANGUAGE_VERSION() + "\n");
                     } else {
                         out.write("Could not initialize GLFW for GL info.\n");
                     }

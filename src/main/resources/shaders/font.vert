@@ -1,4 +1,4 @@
-#version 330 core
+#version 310 es
 
 // Per‑vertex attributes: position in 3D and UV in atlas
 layout(location = 0) in vec3 inPos;    // glyph quad vertex position

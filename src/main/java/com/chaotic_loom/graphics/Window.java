@@ -117,21 +117,33 @@ public class Window {
         collectGLFWData();
 
         Loggers.WINDOW.info("OpenGL Initialized: {}", glGetString(GL_VERSION));
+
+        Loggers.WINDOW.info("Instancing supported: {}", glfwExtensionSupported("GL_EXT_instanced_arrays"));
+        Loggers.WINDOW.info("glVertexAttribDivisor supported: {}", glfwGetProcAddress("glVertexAttribDivisor"));
+
+        Loggers.WINDOW.info("GL Renderer:  {}", glfw_GL_RENDERER());
+        Loggers.WINDOW.info("GL Vendor:    {}", glfw_GL_VENDOR());
+        Loggers.WINDOW.info("GL Version:   {}", glfw_GL_VERSION());
+        Loggers.WINDOW.info("GLSL Version: {}", glfw_GL_SHADING_LANGUAGE_VERSION());
     }
 
     public void setUpGLFWContextVersion() {
         OSDetector.OS os = Launcher.getInstance().getOs();
         OSDetector.Distro distro = Launcher.getInstance().getDistro();
-        //if (os == OSDetector.OS.LINUX && distro == OSDetector.Distro.LINKO) {
-            //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-            //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-        //} else {
+
+        if (os == OSDetector.OS.LINUX && distro == OSDetector.Distro.LINKO) {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+
+            glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+        } else {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-        //}
+        }
     }
 
     private void collectGLFWData() {
